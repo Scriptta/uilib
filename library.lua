@@ -57,7 +57,7 @@ function Homo.CreateWindow()
 	local UICorner = Instance.new("UICorner")
 
 	homohub.Name = [["homohub" - :nerd:]]
-	homohub.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+	homohub.Parent = gethui() or game.CoreGui or localPlayer.PlayerGui
 	homohub.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 	Window.Name = "Window"
