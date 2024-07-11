@@ -18,52 +18,17 @@ function Homo.CreateWindow()
 	
 	warn("homohub loaded wer love homohacks!!")
 	
+	local blur = Instance.new('BlurEffect')
+	blur.Size = 0
+	blur.Parent = camera
 	local homohub = Instance.new("ScreenGui")
 	local Window = Instance.new("Frame")
-	
-	userInputService.InputBegan:Connect(function(inputCode, focused)
-		if not focused then
-			local keyCode = inputCode.KeyCode.Name
-			
-			if keyCode == 'Y' then
-				homohub.Enabled = not homohub.Enabled
-				
-				if not homohub.Enabled then 
-					for Index, GUIObject in Library.Created do
-						local did, didnt = pcall(function()
-							return GUIObject.Visible
-						end)
-						
-						if did then
-							GUIObject.Visible = false
-						end
-					end
-				else
-					task.wait(.05)
-					for Index, GUIObject in Library.Created do
-						local did, didnt = pcall(function()
-							return GUIObject.Visible
-						end)
-
-						if did then
-							local Hover = Instance.new'Sound'
-							Hover.SoundId = 'rbxassetid://720166642'
-							Hover.Parent = camera
-							Hover.Volume = .01
-							Hover:Play()
-							GUIObject.Visible = true
-						end
-						task.wait(.05)
-					end
-				end
-			end
-		end
-	end)
 	local UICorner = Instance.new("UICorner")
 
 	homohub.Name = [["homohub" - :nerd:]]
-	homohub.Parent = gethui() or game.CoreGui or game.Players.LocalPlayer.PlayerGui
+	homohub.Parent = game.Players.LocalPlayer.PlayerGui
 	homohub.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+	homohub.Enabled = false
 
 	Window.Name = "Window"
 	Window.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -74,6 +39,60 @@ function Homo.CreateWindow()
 	Window.BorderSizePixel = 0
 	Window.Position = UDim2.new(0.5, 0, 0.5, 0)
 	Window.Size = UDim2.new(0, 400, 0, 300)
+	userInputService.InputBegan:Connect(function(inputCode, focused)
+		if not focused then
+			local keyCode = inputCode.KeyCode.Name
+			if keyCode == 'Y' then
+				homohub.Enabled = not homohub.Enabled
+				
+				local Leave = Instance.new'Sound'
+				Leave.SoundId = 'rbxassetid://4571259077'
+				Leave.Volume = 0.1
+				Leave.Parent = homohub
+				Leave:Play()
+
+				Window.AnchorPoint = Vector2.new()
+				Window.Position = UDim2.new()
+				
+				if not homohub.Enabled then 
+					game:GetService('TweenService'):Create(blur, TweenInfo.new(1, Enum.EasingStyle.Quint), {
+						Size = 0
+					}):Play()
+					for Index, GUIObject in Library.Created do
+						local did, didnt = pcall(function()
+							return GUIObject.Visible
+						end)
+
+						if did then
+							GUIObject.Visible = false
+						end
+					end
+				else				
+					game:GetService('TweenService'):Create(blur, TweenInfo.new(1, Enum.EasingStyle.Quint), {
+						Size = 20
+					}):Play()
+					Window.AnchorPoint = Vector2.new(0.5, 0.5)
+					game:GetService('TweenService'):Create(Window, TweenInfo.new(1, Enum.EasingStyle.Quint), {Position = UDim2.new(0.5, 0, 0.5, 0)}):Play()				
+
+					for Index, GUIObject in Library.Created do
+						local did, didnt = pcall(function()
+							return GUIObject.Visible
+						end)
+						if not homohub.Enabled then break end
+						if did then
+							local Hover = Instance.new'Sound'
+							Hover.SoundId = 'rbxassetid://720166642'
+							Hover.Parent = game:GetService('SoundService')
+							Hover.Volume = .0075
+							Hover:Play()
+							GUIObject.Visible = true
+						end
+						task.wait(.025)
+					end
+				end
+			end
+		end
+	end)
 
  	UICorner.Parent = Window
 	
@@ -132,27 +151,41 @@ function Homo.CreateWindow()
 			if Input.UserInputType == Enum.UserInputType.MouseButton1 then
 				local Click = Instance.new'Sound'
 				Click.SoundId = 'rbxassetid://156286438'
-				Click.Parent = Button
+				Click.Parent = game:GetService('SoundService')
 				Click.Volume = .05
+				game:GetService('ContentProvider'):PreloadAsync({
+					Click
+				})
 				Click:Play()
+				task.delay(Click.TimeLength, function()
+					Click:Destroy()
+				end)
 				task.spawn(Callback)
 			elseif Input.UserInputType == Enum.UserInputType.MouseButton2 and type(RightClickCallback) == 'function' then
 				task.spawn(RightClickCallback)
 				local Click = Instance.new'Sound'
 				Click.SoundId = 'rbxassetid://156286438'
-				Click.Parent = Button
+				Click.Parent = game:GetService('SoundService')
 				Click.Volume = .05
+				game:GetService('ContentProvider'):PreloadAsync({
+					Click
+				})
 				Click:Play()
+				task.delay(Click.TimeLength, function()
+					Click:Destroy()
+				end)
 			end
 		end)
 		
 		Button.MouseEnter:Connect(function()
-			local Hover = Instance.new'Sound'
-			Hover.SoundId = 'rbxassetid://720166642'
-			Hover.Parent = Button
-			Hover.Volume = .01
-			Hover:Play()
-			game:GetService('TweenService'):Create(Button, TweenInfo.new(.5), {BackgroundColor3 = Color3.fromRGB(75, 75, 75)}):Play()
+			task.spawn(function()
+				local Hover = Instance.new'Sound'
+				Hover.SoundId = 'rbxassetid://720166642'
+				Hover.Parent = Button
+				Hover.Volume = .01
+				Hover:Play()
+				game:GetService('TweenService'):Create(Button, TweenInfo.new(.5), {BackgroundColor3 = Color3.fromRGB(75, 75, 75)}):Play()
+			end)
 		end)
 		
 		Button.MouseLeave:Connect(function()
@@ -160,6 +193,16 @@ function Homo.CreateWindow()
 		end)
 		
 		--UICorner.Parent = Button
+		
+		for Index, GUIObject in Library.Created do
+			local did, didnt = pcall(function()
+				return GUIObject.Visible
+			end)
+
+			if did then
+				GUIObject.Visible = false
+			end
+		end
 		
 		return Button
 	end
@@ -206,7 +249,13 @@ function Homo.CreateWindow()
 					Click.SoundId = 'rbxassetid://156286438'
 					Click.Parent = Toggle
 					Click.Volume = .05
+					game:GetService('ContentProvider'):PreloadAsync({
+						Click
+					})
 					Click:Play()
+					task.delay(Click.TimeLength, function()
+						Click:Destroy()
+					end)
 					Callback(Library.Toggles[Flag])
 				end
 				task.spawn(bals)
@@ -216,12 +265,14 @@ function Homo.CreateWindow()
 		--UICorner.Parent = Toggle
 		
 		Toggle.MouseEnter:Connect(function()
-			local Hover = Instance.new'Sound'
-			Hover.SoundId = 'rbxassetid://720166642'
-			Hover.Parent = Toggle
-			Hover.Volume = .01
-			Hover:Play()
-			game:GetService('TweenService'):Create(Toggle, TweenInfo.new(.5), {BackgroundColor3 = Color3.fromRGB(75, 75, 75)}):Play()
+			task.spawn(function()
+				local Hover = Instance.new'Sound'
+				Hover.SoundId = 'rbxassetid://720166642'
+				Hover.Parent = Toggle
+				Hover.Volume = .01
+				Hover:Play()
+				game:GetService('TweenService'):Create(Toggle, TweenInfo.new(.5), {BackgroundColor3 = Color3.fromRGB(75, 75, 75)}):Play()
+			end)
 		end)
 
 		Toggle.MouseLeave:Connect(function()
@@ -238,30 +289,4 @@ function Homo.CreateWindow()
 	return Library
 end
 
-
-local Window = Homo.CreateWindow()
-
-local Button
-Button = Window.CreateButton('TestingButton1','Offset100Studs', function()
-	localPlayer.Character:TranslateBy(Vector3.new(0, 100, 0))
-end)
-
-for i = 1, 50 do
-	Window.CreateButton('TestingButto1'..i,'321231', function()
-		localPlayer.Character:TranslateBy(Vector3.new(0, 100, 0))
-	end)
-end
-
-local Toggle
-local noob = false
-Toggle = Window.CreateToggle('TestingButton2','im cool', function(CallBack)
-	noob = CallBack
-	while noob and task.wait() do
-		localPlayer.Character:TranslateBy(game.Players.LocalPlayer.Character.Humanoid.MoveDirection)
-	end
-end)
-
-local DisableAnimations
-DisableAnimations = Window.CreateToggle('Disable','im cool', function(CallBack)
-	localPlayer.Character.Animate.Disabled = CallBack
-end)
+return Homo
