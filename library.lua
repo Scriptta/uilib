@@ -46,6 +46,11 @@ function Homo.CreateWindow()
 						end)
 
 						if did then
+							local Hover = Instance.new'Sound'
+							Hover.SoundId = 'rbxassetid://720166642'
+							Hover.Parent = camera
+							Hover.Volume = .01
+							Hover:Play()
 							GUIObject.Visible = true
 						end
 						task.wait(.05)
@@ -57,22 +62,26 @@ function Homo.CreateWindow()
 	local UICorner = Instance.new("UICorner")
 
 	homohub.Name = [["homohub" - :nerd:]]
-	homohub.Parent = gethui() or game.CoreGui or localPlayer.PlayerGui
+	homohub.Parent = gethui() or game.CoreGui or game.Players.LocalPlayer.PlayerGui
 	homohub.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 	Window.Name = "Window"
+	Window.AnchorPoint = Vector2.new(0.5, 0.5)
 	Window.Parent = homohub
 	Window.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 	Window.BackgroundTransparency = 0.250
 	Window.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	Window.BorderSizePixel = 0
-	Window.Position = UDim2.new(0.306576401, 0, 0.281341106, 0)
+	Window.Position = UDim2.new(0.5, 0, 0.5, 0)
 	Window.Size = UDim2.new(0, 400, 0, 300)
 
  	UICorner.Parent = Window
 	
-	local Holder = Instance.new('Frame')
+	local Holder = Instance.new('ScrollingFrame')
+	Holder.ScrollBarThickness = 0
+	Holder.ScrollBarImageTransparency = 1
 	local UIGridLayout = Instance.new("UIGridLayout")
+	UIGridLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
 	Holder.Name = "Holder"
 	Holder.Parent = Window
@@ -85,7 +94,7 @@ function Homo.CreateWindow()
 
 	UIGridLayout.Parent = Holder
 	UIGridLayout.SortOrder = Enum.SortOrder.LayoutOrder
-	UIGridLayout.CellPadding = UDim2.new(0, 3.5, 0, 3.5)
+	UIGridLayout.CellPadding = UDim2.new(0, 3, 0, 5)
 	UIGridLayout.CellSize = UDim2.new(0, 60, 0, 30)
 	
 	function Library.CreateButton(Flag, Name, Callback, RightClickCallback)
@@ -236,6 +245,12 @@ local Button
 Button = Window.CreateButton('TestingButton1','Offset100Studs', function()
 	localPlayer.Character:TranslateBy(Vector3.new(0, 100, 0))
 end)
+
+for i = 1, 50 do
+	Window.CreateButton('TestingButto1'..i,'321231', function()
+		localPlayer.Character:TranslateBy(Vector3.new(0, 100, 0))
+	end)
+end
 
 local Toggle
 local noob = false
