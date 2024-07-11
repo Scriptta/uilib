@@ -26,7 +26,7 @@ function Homo.CreateWindow()
 	local UICorner = Instance.new("UICorner")
 
 	homohub.Name = [["homohub" - :nerd:]]
-	homohub.Parent = game.Players.LocalPlayer.PlayerGui
+	homohub.Parent = gethui() or game:FindService'CoreGui' or localPlayer.PlayerGui
 	homohub.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	homohub.Enabled = false
 
